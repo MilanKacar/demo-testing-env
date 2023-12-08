@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  @keyframes progress {
+    0% { --percentage: 0; }
+    100% { --percentage: var(--progress-value); }
+  }
+
+  @property --percentage {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+  }
+
+  header {
+      text-align: center; /* Center the content */
+      padding: 0px 0; /* Add some padding for aesthetic spacing */
+      /* Add other styling as needed */
+  }
+
+[role="progressbar"] {
+    --size: 130px;
+    --text-color: #eaebe4; /* Blue color for the text */
+    align-items: center;
+    animation: progress 2s 0.5s forwards;
+    width: var(--size);
+    aspect-ratio: 2 / 1;
+    border-radius: 50% / 100% 100% 0 0;
+    position: relative;
+    display: none;
+    overflow: hidden;
+    align-items: center; /* Updated line to center vertically  */
+    flex-direction: column;
+    justify-content: flex-end;
+    font-size: calc(var(--size) / 5);
+    color: #eaebe4; /*var(--text-color);*/
+    /* Center horizontally left: 20%; */
+    /* Center the element  transform: translate(-50%, -50%);  */
+}
+
+  #available-points {
+    text-align: center;
+    display: none;
+    font-size: 20px;
+    flex-direction: column;
+    justify-content: center;
+    background: #3b3b3b; /* Light blue to dark blue gradient box-sizing: border-box; */
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  [role="progressbar"]::before {
+    content: "";
+    position: absolute;
+    justify-content: center;
+    flex-direction: column;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: conic-gradient(
+      from 0.75turn at 50% 100%, 
+      var(--bar-gradient-start) calc(var(--percentage) * 1% / 2), 
+      var(--bar-gradient-end) calc(var(--percentage) * 1% / 2),
+      var(--secondary) 0
+    );
+    mask: radial-gradient(at 50% 100%, white 55%, transparent 55.5%);
+    mask-mode: alpha;
+    -webkit-mask: radial-gradient(at 50% 100%, #0000 55%, #000 55.5%);
+    -webkit-mask-mode: alpha;
+  }
+
+  [role="progressbar"]::after {
+    counter-reset: percentage var(--value);
+    content: counter(percentage);
+    color: #3b3b3b;
+  }
+
+
+  /* demo */
+  body {
+    margin: 0;
+    display: grid;
+    place-items: center;
+    justify-content: center;
+    font-family: 'Roboto', sans-serif;
+    height: 100vh;
+    background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  }
+
+  #logo img {
+      transform: scale(0.7); /* Scale down the image to 40% of its original size */
+      display: inline-block; /* Allows for centering with text-align */
+      margin-bottom: -120px;
+    }
+    
+  .parent-style {
+      position: relative;
+      /* Other styles for the parent div */
+  }
+  
+  @keyframes spin {
+      0% {
+          transform: rotate(0deg);
+      }
+      100% {
+          transform: rotate(360deg);
+      }
+  }
+  
+  .loading-style {
+      justify-content: center;
+      flex-direction: column;
+      display: flex;
+      align-items: center;
+      top: 70%;
+      left: 50%;
+      width: 50px; /* Size of the loader */
+      height: 50px; /* Size of the loader */
+      background: transparent;
+      border-radius: 50%;
+      border: 5px solid #f3f3f3; /* Light grey border */
+      border-top: 5px solid #3498db; /* Blue color */
+      animation: spin 2s linear infinite;
+      transform: translate(-50%, -50%); /* Center the loader */
+  }
+
+.content-style {
+    display: none;
+    /* Other styles for main content */
+}
+
+  input[id="input-points"] {
+    width: 50%; /* Full width to accommodate different screen sizes */
+    padding: 12px 15px; /* Larger padding for easier interaction */
+    border: 1px solid #ccc; /* Subtle border */
+    border-radius: 6px; /* Smoothed corners */
+    display: none;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1); /* Gentle shadow */
+    font-size: 18px; /* Larger font size for readability */
+    color: #333; /* Dark color for contrast */
+    background-color: #fff; /* Clear background */
+    outline: none; /* Remove default focus outline */
+    transition: all 0.3s ease; /* Smooth transition for interactions */
+    /* Disable default iOS styling -webkit-appearance: none;  */ 
+    margin: 0; /* Reset any default margin */
+    box-sizing: border-box; /* Include padding and border in the width */
+}
+
+input[id="input-points"]:focus {
+    border-color: #4285F4; /* Highlighted border on focus */
+    box-shadow: 0 0 8px rgba(66, 133, 244, 0.3); /* Enhanced focus shadow */
+}
+
+.flex-container {
+    display: flex;
+    justify-content: center; /* Horizontal centering */
+    align-items: center; /* Vertical centering */
+    flex-direction: column;
+}
+
+ .button {
+        position: relative;
+        padding: 20px;
+        background-color: #6d6d6d; 
+        display: none;
+        border-radius: 4em;
+        font-size: 16px;
+        color: white;
+        padding: 0.8em 1.8em;
+        cursor: pointer;
+        user-select: none;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition-duration: 0.4s;
+        -webkit-transition-duration: 0.4s;
+    }
+
+  .button:hover {
+      transition-duration: 0.1s;
+      background-color: #6699e3;
+  }
+  
+  .button:after {
+      content: "";
+      display: block;
+      position: absolute;
+      border-radius: 4em;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: all 0.5s;
+      box-shadow: 0 0 10px 40px white;
+  }
+  
+  .button:active:after {
+      box-shadow: 0 0 0 0 white;
+      position: absolute;
+      border-radius: 4em;
+      left: 0;
+      top: 0;
+      opacity: 1;
+      transition: 0s;
+  }
+  
+  .button:active {
+      top: 1px;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    /* background-color: rgba(0, 0, 0, 0.4); */
+    top: 50%;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 300px; /* Set a maximum width */
+    border-radius: 15px; /* Rounded corners */
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.yes-button, .no-button {
+    padding: 10px 20px;
+    border: 1px solid #888;
+    border-radius: 15px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.yes-button {
+    background-color: #6d6d6d; /* Dark Blue */
+}
+
+.no-button {
+    background-color: #eaebe4; /* Light Blue */
+}
+
+
+</style>
+</head>
+<body>
+  <header>
+    <!-- Logo in the header, which links to the specified URL -->
+    <a href="https://capricesfestival.com/" target="_blank" id="logo">
+      <img src="logo.png" alt="Task Force Event Logistique Logo" style="width: 70%; height: auto;">
+    </a>
+  </header>
+  <div id="main-container" class="flex-container">
+      <div class="flex-container" style="padding-bottom: 86px;">
+        <div id="progressbar" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="--value: 0; --secondary: #D2D3CD; --progress-value: 1000;"></div>
+      </div>
+      <div id="available-points" style="padding-bottom: 14px;">Points à déduire CHF</div>
+      <div id="loadingScreen" class="loading-style"></div>
+      <div class="flex-container" style="padding-bottom: 14px;">
+        <input id="input-points" name="quantity" min="1" max="10000" type="tel">
+      </div>
+      <button class="button" type="button" id="subtract-button">Subtract</button>
+  </div>
+  <div id="modal" class="modal">
+    <div class="modal-content">
+        <p>Do you want to proceed?</p>
+        <button class="yes-button">YES</button>
+        <button class="no-button">NO</button>
+    </div>
+  </div>
+  <footer style="text-align: center; padding: 20px 0; background-color: linear-gradient(to right, #83a4d4, #b6fbff);">
+    <a href="https://www.facebook.com" target="_blank" style="margin: 0 10px; color: #3b3b3b;"><i class="fab fa-facebook-f"></i></a>
+    <a href="https://www.instagram.com" target="_blank" style="margin: 0 10px; color: #3b3b3b;"><i class="fab fa-instagram"></i></a>
+    <a href="https://www.linkedin.com" target="_blank" style="margin: 0 10px; color: #3b3b3b;"><i class="fab fa-linkedin-in"></i></a>
+    <p style="font-size: 10px; color: #3b3b3b; margin-top: 20px;">Powered by RushB!</p>
+  </footer>
+</body>
+<script>
+
+  // Parse the URL to extract the id parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  var currentPoints = 0; // Initialize currentPoints
+  var startingPoints = 0;
+  const idValue = urlParams.get("id");
+  const apiKey = urlParams.get("API_KEY");
+  
+  if (!apiKey) {
+    window.location.replace('https://milankacar.github.io/caprices-points-check/?id=' + idValue);
+  }
+
+  // Function to get and display points
+  function getPoints(id) {
+      return new Promise((resolve, reject) => {
+          fetch("https://qr-app-caprices-o5ud4o55aa-ey.a.run.app/get-points", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ id: id })
+          })
+          .then(response => response.json())
+          .then(data => {
+              currentPoints = parseInt(data.current_points, 10);
+              startingPoints = parseInt(data.starting_points, 10);
+              // pointsInfo.textContent = `Points: ${points}`;
+              // currentPoints = points; // Update currentPoints here
+              // setProgressBarColor(points);
+
+              const progressbar = document.getElementById('progressbar');
+              const gradients = {
+                red: { start: '#ff9999', end: '#8b0000' },
+                yellow: { start: '#ffff99', end: '#ffcc00' },
+                green: { start: '#99ff99', end: '#006400' },
+              };
+            
+              const points = (currentPoints / startingPoints) * 100;
+              let gradient;
+              if (points < 20) {
+                gradient = gradients.red;
+              } else if (points >= 20 && points < 70) {
+                gradient = gradients.yellow;
+              } else {
+                gradient = gradients.green;
+              }
+            
+              progressbar.style.setProperty('--bar-gradient-start', gradient.start);
+              progressbar.style.setProperty('--bar-gradient-end', gradient.end);
+              progressbar.style.setProperty('--value', currentPoints.toString());
+              progressbar.style.setProperty('--progress-value', points.toString());
+              // Function to show the progress bar after getting points
+              showProgressBar();
+              resolve(points); // Resolve the Promise with the integer points value
+              
+          })
+          .catch(error => {
+              reject(error); // Reject the Promise if there's an error
+          });
+      });
+  }
+
+  function hideProgressBar() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    loadingScreen.style.display = 'flex';
+    /*loadingScreen.remove();*/
+    const availablePoints = document.getElementById('available-points');
+    availablePoints.style.display = 'none';
+    const inputPoints = document.getElementById('input-points');
+    inputPoints.style.display = 'none';
+    const progressBar = document.getElementById('progressbar');
+    progressBar.style.display = 'none';
+    const subtractButton = document.getElementById("subtract-button");
+    subtractButton.style.display = 'none';
+  }
+
+  function showProgressBar() {
+    const loadingScreen = document.getElementById('loadingScreen');
+    loadingScreen.style.display = 'none';
+    /*loadingScreen.remove();*/
+    const availablePoints = document.getElementById('available-points');
+    availablePoints.style.display = 'flex';
+    const inputPoints = document.getElementById('input-points');
+    inputPoints.style.display = 'flex';
+    const progressBar = document.getElementById('progressbar');
+    progressBar.style.display = 'flex';
+    const subtractButton = document.getElementById("subtract-button");
+    subtractButton.style.display = 'flex';
+  }
+
+
+  // Initial load of points using the extracted id
+  if (idValue) {
+      getPoints(idValue);
+  }
+
+  // Function to get and validate the input value
+  function getInputValue() {
+      var inputElement = document.getElementById("input-points");
+      var inputValue = inputElement.value;
+  
+      // Check if the input is a valid number
+      if (!isNaN(inputValue) && inputValue !== "") {
+          var numericValue = parseFloat(inputValue);
+  
+          // Assuming currentPoints and startingPoints are global variables
+          if (numericValue > currentPoints) {
+              // Display an alert for insufficient credits
+              alert("User does not have enough credits.");
+              // Clear the input field
+              inputElement.value = "";
+              return null;
+          } else if (numericValue > startingPoints) {
+              // Display an alert for exceeding starting points
+              alert("User cannot deduct more than starting credits.");
+              // Clear the input field
+              inputElement.value = "";
+              return null;
+          } else if (numericValue < 0) {
+              // Display an alert for invalid input
+              alert("Please enter a positive valid number.");
+              // Clear the input field
+              inputElement.value = "";
+              return null;
+          } else {
+              console.log("Numeric Value:", numericValue);
+              return numericValue;
+          } 
+      }
+
+  }
+  
+
+
+    document.getElementById('subtract-button').onclick = function() {
+        document.getElementById('modal').style.display = 'block';
+    }
+
+    document.querySelector('.yes-button').onclick = function() {
+        document.getElementById('modal').style.display = 'none';
+        // Example of using the function
+        var userInput = getInputValue();
+        var newPoints = currentPoints - userInput;
+
+      // Replace these values with your actual data
+      const apiUrl = "https://qr-app-demo-o5ud4o55aa-ey.a.run.app/update-points";
+
+      // Prepare the request body
+      const requestBody = {
+          id: idValue,
+          new_points: newPoints,
+          credentials: apiKey
+      };
+
+      console.log(requestBody);
+      // Make the POST request
+      hideProgressBar();
+      fetch(apiUrl, {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+              // Add other headers if needed
+          },
+          body: JSON.stringify(requestBody)
+      })
+          .then(response => response.json())
+          .then(data => {
+              // Handle the response data
+              console.log("Response:", data);
+              if (data.error) {
+                alert("You are not authorized for the request.");
+              }
+              if (data.success) {
+                const progressBar = document.getElementById('progressbar');
+                progressBar.style.setProperty('--value', '0');
+                currentPoints = data.points                  
+                const gradients = {
+                  red: { start: '#ff9999', end: '#8b0000' },
+                  yellow: { start: '#ffff99', end: '#ffcc00' },
+                  green: { start: '#99ff99', end: '#006400' },
+                };
+              
+                const points = (currentPoints / startingPoints) * 100;
+                let gradient;
+                if (points < 20) {
+                  gradient = gradients.red;
+                } else if (points >= 20 && points < 70) {
+                  gradient = gradients.yellow;
+                } else {
+                  gradient = gradients.green;
+                }
+              
+                progressBar.style.setProperty('--bar-gradient-start', gradient.start);
+                progressBar.style.setProperty('--bar-gradient-end', gradient.end);
+                progressBar.style.setProperty('--value', currentPoints.toString());
+                progressBar.style.setProperty('--progress-value', points.toString());
+                
+                showProgressBar();
+                var inputElement = document.getElementById("input-points");
+                inputElement.value = "";
+              }
+              else {
+                alert("You are not authorized for the request or something went wrong.");
+              }
+          })
+          .catch(error => {
+              // Handle errors
+              alert("Something went wrong, points are not deducted. Try it again.");
+              console.error("Error:", error);
+      });
+
+    }
+
+    document.querySelector('.no-button').onclick = function() {
+        document.getElementById('modal').style.display = 'none';
+        var inputElement = document.getElementById("input-points");
+        inputElement.value = "";
+    }
+
+  
+</script>
+
+
+</html>
